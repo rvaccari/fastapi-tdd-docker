@@ -8,8 +8,8 @@ log = logging.getLogger('uvicorn')
 
 
 class Settings(BaseSettings):
-    environment: str = os.getenv('ENVIRONMENT', 'prod')
-    testing: bool = os.getenv('TESTING', 1)
+    environment: str = os.getenv('ENVIRONMENT', 'dev')
+    testing: bool = os.getenv('TESTING', 0)
     database_url: AnyUrl = os.environ.get('DATABASE_URL')
 
 
