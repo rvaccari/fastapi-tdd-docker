@@ -3,7 +3,7 @@ name: Continuous Integration and Delivery
 on: [push]
 
 env:
-  IMAGE: docker.pkg.github.com/$(echo $GITHUB_REPOSITORY | tr '[A-Z]' '[a-z]')/summarizer
+  IMAGE: sbgo_w/summarizer
 
 jobs:
 
@@ -25,13 +25,13 @@ jobs:
         run: |
           docker build \
             --target builder \
-            --cache-from ${{ env.IMAGE }}-builder:latest \
-            --tag ${{ env.IMAGE }}-builder:latest \
+            --cache-from sbgo_w/summarizer-builder:latest \
+            --tag sbgo_w/summarizer-builder:latest \
             --file ./project/Dockerfile.prod \
             "./project"
           docker build \
-            --cache-from ${{ env.IMAGE }}-final:latest \
-            --tag ${{ env.IMAGE }}-final:latest \
+            --cache-from sbgo_w/summarizer-final:latest \
+            --tag sbgo_w/summarizer-final:latest \
             --file ./project/Dockerfile.prod \
             "./project"
       - name: Push images
@@ -70,23 +70,23 @@ jobs:
       - name: Run container
         run: |
           docker run \
-            -d \
-            --name fastapi-tdd-docker \
+            --name sbgo-app \
             -e PORT=8765 \
             -e ENVIRONMENT=dev \
             -e DATABASE_TEST_URL=sqlite://sqlite.db \
+            -e DATABASE_URL=sqlite://sqlite.db \
             -p 5003:8765 \
-            ${{ env.IMAGE }}-final:latest
+            sbgo_w/summarizer-final:latest
       - name: Install requirements
-        run: docker exec fastapi-tdd-docker pip install black==20.8b1 flake8==3.8.4 isort==5.6.4 pytest==6.2.2
+        run: docker exec sbgo-app pip install black==20.8b1 flake8===3.8.4 isort==5.6.4 pytest==6.2.2
       - name: Pytest
-        run: docker exec fastapi-tdd-docker python -m pytest .
+        run: docker exec fastapi-tdd python -m pytest .
       - name: Flake8
-        run: docker exec fastapi-tdd-docker python -m flake8 .
+        run: docker exec fastapi-tdd python -m flake8 .
       - name: Black
-        run: docker exec fastapi-tdd-docker python -m black . --check
+        run: docker exec fastapi-tdd python -m black . --check
       - name: isort
-        run: docker exec fastapi-tdd-docker python -m isort . --check-only
+        run: docker exec fastapi-tdd python -m isort . --check-only
 
   deploy:
     name: Deploy to Heroku
