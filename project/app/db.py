@@ -11,7 +11,7 @@ log = logging.getLogger("uvicorn")
 def init_db(app: FastAPI) -> None:
     register_tortoise(
         app,
-        db_url=config("DATABASE_URL", default="sqlite://sqlite.db"),
+        db_url=config("DATABASE_URL_SSL", default="sqlite://sqlite.db"),
         modules={"models": ["app.models.tortoise"]},
         generate_schemas=False,
         add_exception_handlers=True,
@@ -22,7 +22,7 @@ async def generate_schema() -> None:
     log.info("Initializing Tortoise...")
 
     await Tortoise.init(
-        db_url=config("DATABASE_URL"), modules={"models": ["models.tortoise"]}
+        db_url=config("DATABASE_URL_SSL"), modules={"models": ["models.tortoise"]}
     )
     log.info("Generating database schema via Tortoise...")
     await Tortoise.generate_schemas()
