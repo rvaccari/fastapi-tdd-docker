@@ -32,8 +32,7 @@ lint:
 	rm -rf .mypy_cache
 	rm -rf .pytest_cache
 	rm -f .coverage
-	#make test ARGS="--cov=project --cov-fail-under=70 $(ARGS)"
-	make test ARGS="--cov=. --cov-fail-under=70 --pydocstyle --mypy --black $(ARGS)"
+	make test ARGS="--cov=app/ --cov-fail-under=70 --pydocstyle --mypy --black $(ARGS)"
 
 format:
 	black app tests
